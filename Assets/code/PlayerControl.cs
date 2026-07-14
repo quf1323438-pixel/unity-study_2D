@@ -8,6 +8,7 @@ public class PlayerControl : MonoBehaviour
     public Vector2 MoveInput {get; private set;}
     
     public bool JumpHeld {get; private set;}
+    public bool DashPressed {get; private set;}
     private bool jumpPressed; //애는왜 private?
 
     void Awake()
@@ -24,6 +25,8 @@ public class PlayerControl : MonoBehaviour
         controls.Player.Jump.started += OnJumpStarted;
         controls.Player.Jump.performed += OnJumpPerformed;
         controls.Player.Jump.canceled += OnJumpCanceled;
+
+        controls.Player.Dash.started += OnDashStart;
     }
 
     private void OnDisable()
@@ -34,7 +37,9 @@ public class PlayerControl : MonoBehaviour
 
         controls.Player.Jump.started -= OnJumpStarted;
         controls.Player.Jump.performed -= OnJumpPerformed;
-        controls.Player.Jump.canceled -= OnJumpCanceled;   
+        controls.Player.Jump.canceled -= OnJumpCanceled; 
+
+        controls.Player.Dash.started -= OnDashStart;
     }
 
 
@@ -67,6 +72,18 @@ public class PlayerControl : MonoBehaviour
     {
         bool value = jumpPressed;
         jumpPressed = false;
+        return value;
+    }
+
+    public void OnDashStart(InputAction.CallbackContext ctx) //입력이 지속적으로 들어올 때
+    {
+        DashPressed = true;
+    }
+
+    public bool ConsumeDashPressed()
+    {
+        bool value = DashPressed;
+        DashPressed = false;
         return value;
     }
 }
