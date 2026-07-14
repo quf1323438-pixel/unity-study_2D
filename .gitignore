@@ -1,0 +1,28 @@
+# Unity 자동 생성 폴더 (프로젝트 열면 재생성됨 - 올릴 필요 없음)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]serSettings/
+/[Mm]emoryCaptures/
+
+# IDE 관련
+/.vscode/
+/.idea/
+/.vs/
+*.csproj
+*.sln
+*.slnx
+*.user
+
+# OS 관련
+.DS_Store
+
+# Unity 크래시 리포트
+sysinfo.txt
+*.stackdump
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
