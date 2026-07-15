@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour
     //컴포넌트
     private Rigidbody2D rb;
     private BoxCollider2D col;
+    private SpriteRenderer spl;
+    private Animator ani;
 
     //좌우 이동
     public float speed;
@@ -42,12 +44,15 @@ public class PlayerMovement : MonoBehaviour
 
 
     //공격
+    private bool isAttacking = false;
 
     private void Awake()
     {
         control = GetComponent<PlayerControl>();
         rb      = GetComponent<Rigidbody2D>();
         col     = GetComponent<BoxCollider2D>();
+        spl     = GetComponent<SpriteRenderer>();
+        ani     = GetComponent<Animator>();
     }
 
     private void Start()
@@ -65,10 +70,31 @@ public class PlayerMovement : MonoBehaviour
         isGround = Physics2D.BoxCast(transform.position, boxsize, 0f, Vector2.down, 0.1f, ground);
 
         if(control.MoveInput.x != 0) facing = control.MoveInput.x;
+
+        spl.flipX = facing < 0; //이거가 잘 모르겠음; facing > 0 왜 이런 형식이 들어오는건지
+
+        if (isAttacking) ani.Play("Player_Attack");
+        else if (!isGround && rb.linearVelocity.y > 0) ani.Play("Player_upjump");
+        else if (!isGround)ani.Play("Player_downjump");
+        else if (control.MoveInput.x != 0) ani.Play("Player_Run");
+        else                               ani.Play("Player_Idle");
+    }
+
+    public void OnAttackEnd()
+    {
+        isAttacking = false;
+        rb.gravityScale = gravity / -Physics2D.gravity.y;
     }
 
     private void FixedUpdate()
     {
+        if (isAttacking)
+        {
+            rb.linearVelocity = new Vector2(0f, 0f);
+            rb.gravityScale = 0f;
+            return;
+        }
+
         //대쉬
         if (cooldownTimer >= 0f) cooldownTimer -= Time.deltaTime; //쿨타임
 
@@ -92,6 +118,13 @@ public class PlayerMovement : MonoBehaviour
             }
             return;
         }
+
+        //공격
+        if (control.ConsumeAttackPressed() && !isAttacking && !isDashing)
+        {
+            isAttacking = true;
+        }
+            
 
         //좌우 이동
         rb.linearVelocity = new Vector2(speed * control.MoveInput.x, rb.linearVelocity.y);
